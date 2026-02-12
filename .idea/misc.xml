@@ -9,6 +9,7 @@
         <option value="$PROJECT_DIR$/irm_scan_service/pom.xml" />
         <option value="$PROJECT_DIR$/medical_report_service/pom.xml" />
         <option value="$PROJECT_DIR$/Activities_service/pom.xml" />
+        <option value="$PROJECT_DIR$/movement_service/pom.xml" />
       </list>
     </option>
     <option name="ignoredFiles">
