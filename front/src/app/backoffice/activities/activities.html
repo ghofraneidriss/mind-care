@@ -1,4 +1,4 @@
-
+Ôªø
   <div class="page-layout">
 
     <!-- begin::NexLink Page Header -->
@@ -124,7 +124,7 @@
                       </div>
                       <div class="ms-2 me-auto">
                         <h6 class="mb-0">Olivia Clark</h6>
-                        <small class="text-body d-block">You can now view the ìReportî.</small>
+                        <small class="text-body d-block">You can now view the ‚ÄúReport‚Äù.</small>
                         <small class="text-muted position-absolute end-0 top-0 mt-2 me-3">4 hr ago</small>
                       </div>
                     </li>
@@ -210,7 +210,7 @@
                 <div class="dropdown-divider my-1"></div>
               </li>
               <li>
-                <a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="authentication/login-basic.html">
+                <a class="dropdown-item d-flex align-items-center gap-2 text-danger" routerLink="/auth/login" onclick="localStorage.removeItem('loggedUser')">
                   <i class="fi fi-sr-exit scale-1x"></i> Log Out
                 </a>
               </li>
@@ -374,7 +374,7 @@
             </a>
           </li>
           <li class="nav-item mt-5" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-title="Login">
-            <a class="menu-link" href="authentication/login-frame.html">
+            <a class="menu-link" routerLink="/auth/login" onclick="localStorage.removeItem('loggedUser')">
               <svg width="24" height="24" viewbox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path opacity="0.5" d="M9.00195 7C9.01406 4.82497 9.11051 3.64706 9.87889 2.87868C10.7576 2 12.1718 2 15.0002 2H16.0002C18.8286 2 20.2429 2 21.1215 2.87868C22.0002 3.75736 22.0002 5.17157 22.0002 8V16C22.0002 18.8284 22.0002 20.2426 21.1215 21.1213C20.2429 22 18.8286 22 16.0002 22H15.0002C12.1718 22 10.7576 22 9.87889 21.1213C9.11051 20.3529 9.01406 19.175 9.00195 17" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round"></path>
                 <path d="M15 12H2M2 12L5.5 9M2 12L5.5 15" stroke="var(--bs-heading-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
@@ -1749,7 +1749,7 @@
       <div class="container-fluid">
         <div class="row g-2">
           <div class="col-lg-6 col-md-7 text-center text-md-start">
-            <p class="mb-0">© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
+            <p class="mb-0">¬© <span class="currentYear">2025</span> NexLink. Proudly powered by <a href="javascript:void(0);">LayoutDrop</a>.</p>
           </div>
           <div class="col-lg-6 col-md-5">
             <ul class="d-flex list-inline mb-0 gap-3 flex-wrap justify-content-center justify-content-md-end">
@@ -1780,6 +1780,9 @@
   
   
   <!-- end::NexLink Page Scripts -->
+
+
+
 
 
 
