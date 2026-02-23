@@ -8,7 +8,7 @@ import tn.esprit.users_service.entity.User;
 import tn.esprit.users_service.repository.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor

@@ -1,6 +1,6 @@
 package tn.esprit.users_service.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,7 +16,7 @@ import tn.esprit.users_service.service.UserService;
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
+
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -30,8 +30,7 @@ class UserControllerTest {
     @MockBean
     private UserService userService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+
 
     @Test
     @WithMockUser

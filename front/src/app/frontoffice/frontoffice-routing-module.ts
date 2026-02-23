@@ -20,6 +20,11 @@ import { ForgotPasswordCoverAuthPage } from './auth/forgot-password-cover/forgot
 import { LoginCoverAuthPage } from './auth/login-cover/login-cover';
 import { NewPasswordCoverAuthPage } from './auth/new-password-cover/new-password-cover';
 import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
+import { ActivityExecuteComponent } from './activities/activity-execute/activity-execute.component';
+import { ActivityHistoryComponent } from './activities/activity-history/activity-history.component';
+import { QuizPlayerComponent } from './quiz-player/quiz-player.component';
+import { ActivitiesFrontPage } from './activities/activities.component';
+import { QuizListComponent } from './quiz-list/quiz-list.component';
 
 const routes: Routes = [
   { path: '', component: Home1 },
@@ -44,6 +49,11 @@ const routes: Routes = [
   { path: 'auth/new-password-cover', component: NewPasswordCoverAuthPage },
   { path: 'auth/signup', component: RegisterCoverAuthPage },
   { path: 'auth/register-cover', component: RegisterCoverAuthPage },
+  { path: 'activities', component: ActivitiesFrontPage },
+  { path: 'activities/history', component: ActivityHistoryComponent },
+  { path: 'activities/execute/:id', component: ActivityExecuteComponent },
+  { path: 'quiz', component: QuizListComponent },
+  { path: 'quiz/player/:id', component: QuizPlayerComponent },
   { path: '**', redirectTo: '' },
 ];
 

@@ -17,6 +17,8 @@ import { TaskManagementPage } from './task-management/task-management';
 import { TeamManagementPage } from './team-management/team-management';
 import { UserManagementPage } from './user-management/user-management';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
+import { QuizManagementComponent } from './quiz-management/quiz-management.component';
+import { QuizListComponent } from '../frontoffice/quiz-list/quiz-list.component';
 
 const routes: Routes = [
   { path: '', component: Home2 },
@@ -36,6 +38,9 @@ const routes: Routes = [
   { path: 'team-management', component: TeamManagementPage },
   { path: 'user-management', component: UserManagementPage },
   { path: 'medical-reports', component: MedicalReportsPageComponent },
+  { path: 'quiz', component: QuizManagementComponent },
+  {path: 'quizlist', component: QuizListComponent },
+   
   { path: '**', redirectTo: '' },
 ];
 
