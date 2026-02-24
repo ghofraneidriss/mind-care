@@ -1,41 +1,43 @@
 package tn.esprit.medical_report_service.Enteties;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "files")
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
 @Getter
-public class File {
+public class AIResult {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long fileid;
+    private Long id;
 
-    private Long caregiverid;
-
-    private String fileName;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "mri_scan_id")
+    @JsonIgnore
+    private MRIScan mriScan;
 
     @Enumerated(EnumType.STRING)
-    private FileType fileType;
+    @NotNull(message = "Risk level is required")
+    private RiskLevel riskLevel;
+
+    private Double confidenceScore;
+
+    @Column(length = 2000)
+    private String analysisDetails;
 
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
-        updatedAt = LocalDateTime.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = LocalDateTime.now();
     }
 }
