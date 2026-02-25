@@ -1,55 +1,94 @@
 {
+<<<<<<< HEAD:front/front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
   "hash": "0b1d4811",
   "configHash": "b925d5a2",
   "lockfileHash": "5281bd25",
   "browserHash": "8631a91f",
+=======
+  "hash": "93575aa2",
+  "configHash": "f4010ce7",
+  "lockfileHash": "5281bd25",
+  "browserHash": "804d38eb",
+>>>>>>> main:front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
   "optimized": {
     "@angular/common": {
       "src": "../../../../../../node_modules/@angular/common/fesm2022/common.mjs",
       "file": "@angular_common.js",
+<<<<<<< HEAD:front/front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
       "fileHash": "20476241",
+=======
+      "fileHash": "b5efcf4f",
+>>>>>>> main:front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
       "needsInterop": false
     },
     "@angular/common/http": {
       "src": "../../../../../../node_modules/@angular/common/fesm2022/http.mjs",
       "file": "@angular_common_http.js",
+<<<<<<< HEAD:front/front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
       "fileHash": "217c21ad",
+=======
+      "fileHash": "052e2f9a",
+>>>>>>> main:front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
       "needsInterop": false
     },
     "@angular/core": {
       "src": "../../../../../../node_modules/@angular/core/fesm2022/core.mjs",
       "file": "@angular_core.js",
+<<<<<<< HEAD:front/front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
       "fileHash": "a498fc10",
+=======
+      "fileHash": "861e1100",
+>>>>>>> main:front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
       "needsInterop": false
     },
     "@angular/forms": {
       "src": "../../../../../../node_modules/@angular/forms/fesm2022/forms.mjs",
       "file": "@angular_forms.js",
+<<<<<<< HEAD:front/front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
       "fileHash": "54f603c9",
+=======
+      "fileHash": "fcdfab6b",
+>>>>>>> main:front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
       "needsInterop": false
     },
     "@angular/platform-browser": {
       "src": "../../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
       "file": "@angular_platform-browser.js",
+<<<<<<< HEAD:front/front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
       "fileHash": "11072e4b",
+=======
+      "fileHash": "91579dc7",
+>>>>>>> main:front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
       "needsInterop": false
     },
     "@angular/router": {
       "src": "../../../../../../node_modules/@angular/router/fesm2022/router.mjs",
       "file": "@angular_router.js",
+<<<<<<< HEAD:front/front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
       "fileHash": "b1420aa6",
+=======
+      "fileHash": "02e0ede8",
+>>>>>>> main:front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
       "needsInterop": false
     },
     "rxjs": {
       "src": "../../../../../../node_modules/rxjs/dist/esm5/index.js",
       "file": "rxjs.js",
+<<<<<<< HEAD:front/front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
       "fileHash": "bb05f924",
+=======
+      "fileHash": "5976071e",
+>>>>>>> main:front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
       "needsInterop": false
     },
     "rxjs/operators": {
       "src": "../../../../../../node_modules/rxjs/dist/esm5/operators/index.js",
       "file": "rxjs_operators.js",
+<<<<<<< HEAD:front/front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
       "fileHash": "29402cc5",
+=======
+      "fileHash": "366decc8",
+>>>>>>> main:front/.angular/cache/21.1.3/mind_care/vite/deps/_metadata.json
       "needsInterop": false
     }
   },

@@ -12,7 +12,7 @@ export const frontofficeAccessGuard: CanMatchFn = (_route, _segments: UrlSegment
     return true;
   }
 
-  if (authService.isAdmin()) {
+  if (authService.isBackofficeRole()) {
     return router.createUrlTree(['/admin']);
   }
 
