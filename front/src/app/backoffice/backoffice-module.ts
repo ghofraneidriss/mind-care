@@ -22,6 +22,7 @@ import { MedicalReportsPageComponent } from './medical-reports-page/medical-repo
 import { FilesManagementPageComponent } from './files-management/files-management';
 import { ForumsPage } from './forums/forums';
 import { IncidentsPage } from './incidents/incidents';
+import { MovementPage } from './movement/movement';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
 
@@ -46,6 +47,7 @@ import { Footer } from './footer/footer';
     FilesManagementPageComponent,
     ForumsPage,
     IncidentsPage,
+    MovementPage,
     Header,
     Footer,
   ],

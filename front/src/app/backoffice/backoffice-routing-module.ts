@@ -21,6 +21,7 @@ import { MedicalReportsPageComponent } from './medical-reports-page/medical-repo
 import { FilesManagementPageComponent } from './files-management/files-management';
 import { ForumsPage } from './forums/forums';
 import { IncidentsPage } from './incidents/incidents';
+import { MovementPage } from './movement/movement';
 
 const routes: Routes = [
   { path: '', component: Home2 },
@@ -43,6 +44,7 @@ const routes: Routes = [
   { path: 'files-management', component: FilesManagementPageComponent },
   { path: 'forums', component: ForumsPage },
   { path: 'incidents', component: IncidentsPage },
+  { path: 'movement', component: MovementPage },
   { path: '**', redirectTo: '' },
 ];
 

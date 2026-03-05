@@ -23,7 +23,9 @@ import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
 import { PatientReportsPage } from './reports/reports';
 import { FrontofficeActivitiesPage } from './activities/activities';
 import { FrontofficeForumsPage } from './forums/forums';
-import { FrontofficeIncidentsPage } from './incidents/incidents';
+import { PatientIncidentsComponent } from './incident-list-front/patient-incidents';
+import { PatientIncidentsHistoryComponent } from './incident-list-front/patient-incidents-history';
+import { IncidentReportFrontPage } from './incident-report/incident-report-front';
 
 const routes: Routes = [
   { path: '', component: Home1 },
@@ -51,7 +53,11 @@ const routes: Routes = [
   { path: 'reports', component: PatientReportsPage },
   { path: 'activities', component: FrontofficeActivitiesPage },
   { path: 'forums', component: FrontofficeForumsPage },
-  { path: 'incidents', component: FrontofficeIncidentsPage },
+  { path: 'incidents', component: PatientIncidentsHistoryComponent },
+  { path: 'incident-list-front', component: PatientIncidentsComponent },
+  { path: 'incident-report', component: IncidentReportFrontPage },
+  { path: 'incidents/history', component: PatientIncidentsHistoryComponent },
+  { path: 'incidents/report', component: IncidentReportFrontPage },
   { path: '**', redirectTo: '' },
 ];
 

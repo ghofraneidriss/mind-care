@@ -1,7 +1,7 @@
 import {
   Title
-} from "./chunk-IDLZSA4J.js";
-import "./chunk-MSYOEZCB.js";
+} from "./chunk-IJD2TDG4.js";
+import "./chunk-FZ6KDRWY.js";
 import {
   HashLocationStrategy,
   Location,
@@ -11,11 +11,11 @@ import {
   PathLocationStrategy,
   PlatformNavigation,
   ViewportScroller
-} from "./chunk-ZZICJOLP.js";
+} from "./chunk-4B5Y5CP2.js";
 import {
   LOCATION_INITIALIZED,
   PlatformLocation
-} from "./chunk-BNRB5JGE.js";
+} from "./chunk-VRZ2CBNE.js";
 import {
   APP_BOOTSTRAP_LISTENER,
   ApplicationRef,
@@ -4396,7 +4396,7 @@ var Router = class _Router {
     try {
       return this.urlSerializer.parse(url);
     } catch (e) {
-      this.console.warn(formatRuntimeError(4018, ngDevMode && `Error parsing URL ${url}. Falling back to '/' instead. 
+      this.console.warn(formatRuntimeError(4018, ngDevMode && `Error parsing URL ${url}. Falling back to '/' instead.
 ` + e));
       return this.urlSerializer.parse("/");
     }
