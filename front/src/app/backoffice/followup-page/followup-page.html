@@ -1,0 +1,556 @@
+<div class="followup-page">
+
+  <!-- ===== PAGE HEADER ===== -->
+  <section class="page-head">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div>
+        <h1><i class="fi fi-rr-heart-rate me-2"></i>Patient Follow-Ups</h1>
+        <p class="text-muted mb-0">Track cognitive, behavioral, and daily living assessments</p>
+      </div>
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-primary" (click)="toggleStats()">
+          <i class="fi fi-rr-chart-histogram me-2"></i>{{ showStats ? 'Hide' : 'Show' }} Statistics
+        </button>
+        <button type="button" class="btn btn-primary btn-lg create-btn" (click)="openCreateModal()">
+          <i class="fi fi-rr-plus me-2"></i>New Follow-Up
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== STATS CARDS ===== -->
+  <section class="stats-row">
+    <article class="stat-card">
+      <div class="stat-icon icon-blue">
+        <i class="fi fi-rr-clipboard-list"></i>
+      </div>
+      <div class="stat-body">
+        <h2>{{ followUps.length }}</h2>
+        <span>Total Follow-Ups</span>
+      </div>
+    </article>
+    <article class="stat-card">
+      <div class="stat-icon icon-teal">
+        <i class="fi fi-rr-smile"></i>
+      </div>
+      <div class="stat-body">
+        <h2>{{ getCalmCount() }}</h2>
+        <span>Calm / Happy</span>
+      </div>
+    </article>
+    <article class="stat-card">
+      <div class="stat-icon icon-amber">
+        <i class="fi fi-rr-exclamation"></i>
+      </div>
+      <div class="stat-body">
+        <h2>{{ getAgitatedCount() }}</h2>
+        <span>Agitated / Anxious</span>
+      </div>
+    </article>
+    <article class="stat-card">
+      <div class="stat-icon icon-red">
+        <i class="fi fi-rr-brain"></i>
+      </div>
+      <div class="stat-body">
+        <h2>{{ getAvgCognitive() }}</h2>
+        <span>Avg Cognitive Score</span>
+      </div>
+    </article>
+  </section>
+  <!-- ===== ADVANCED: Statistics Panel ===== -->
+  <section class="stats-panel" *ngIf="showStats && statistics">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="mb-3"><i class="fi fi-rr-chart-histogram me-2"></i>Follow-Up Statistics (from API)</h5>
+        <div class="row g-3">
+          <div class="col-md-3">
+            <div class="mini-stat">
+              <label>Total Follow-Ups</label>
+              <h3>{{ statistics.totalFollowUps }}</h3>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mini-stat">
+              <label>Avg Cognitive Score</label>
+              <h3>{{ statistics.averageCognitiveScore }}<small>/30</small></h3>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mini-stat">
+              <label>Avg Hours Slept</label>
+              <h3>{{ statistics.averageHoursSlept }}h</h3>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mini-stat">
+              <label>Low Cognitive Count</label>
+              <h3 class="text-danger">{{ statistics.lowCognitiveCount }}</h3>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mini-stat">
+              <label>Mood Distribution</label>
+              <div class="dist-bars">
+                <div *ngFor="let entry of getDistEntries(statistics.moodDistribution)" class="dist-item">
+                  <span class="dist-label">{{ entry.key }}</span>
+                  <div class="dist-bar-bg">
+                    <div class="dist-bar-fill" [ngClass]="'mood-bar-' + entry.key.toLowerCase()"
+                         [style.width.%]="getBarPercent(entry.value, statistics.totalFollowUps)"></div>
+                  </div>
+                  <span class="dist-value">{{ entry.value }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mini-stat">
+              <label>Risk Indicators</label>
+              <div class="risk-indicators mt-2">
+                <span class="flag-badge flag-warn">Agitation: {{ statistics.agitationCount }}</span>
+                <span class="flag-badge flag-danger">Confusion: {{ statistics.confusionCount }}</span>
+                <span class="flag-badge" style="background:#f0e6ff;color:#6f42c1">Poor Sleep: {{ statistics.poorSleepCount }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ADVANCED: Patient Risk Score ===== -->
+  <section class="risk-section">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="mb-3"><i class="fi fi-rr-shield-exclamation me-2"></i>Patient Risk Assessment</h5>
+        <div class="d-flex gap-2 align-items-end">
+          <div>
+            <label class="form-label">Patient ID</label>
+            <input type="number" class="form-control" [(ngModel)]="riskPatientId" placeholder="Enter patient ID" min="1" style="width:160px" />
+          </div>
+          <button class="btn btn-primary" (click)="loadPatientRisk()" [disabled]="!riskPatientId">
+            <i class="fi fi-rr-shield-check me-2"></i>Calculate Risk
+          </button>
+          <button class="btn btn-outline-warning" (click)="checkCognitiveDecline()" [disabled]="!riskPatientId">
+            <i class="fi fi-rr-brain me-2"></i>Check Cognitive Decline
+          </button>
+        </div>
+
+        <!-- Risk Result -->
+        <div *ngIf="showRiskPanel && riskData" class="risk-result mt-3">
+          <div class="d-flex align-items-center gap-3 mb-3">
+            <div class="risk-score-circle" [style.borderColor]="getRiskColor()">
+              <span class="risk-score-value" [style.color]="getRiskColor()">{{ riskData.riskScore }}</span>
+              <span class="risk-score-label">/ 100</span>
+            </div>
+            <div>
+              <h4 class="mb-1">Risk Level: <span [style.color]="getRiskColor()">{{ riskData.riskLevel }}</span></h4>
+              <p class="text-muted mb-0">Patient #{{ riskData.patientId }} · {{ riskData.totalFollowUps }} follow-ups · {{ riskData.unresolvedAlerts }} unresolved alerts</p>
+            </div>
+          </div>
+          <div *ngIf="riskData.riskFactors?.length > 0">
+            <label class="form-label text-muted">Risk Factors:</label>
+            <div class="risk-factors">
+              <span *ngFor="let factor of riskData.riskFactors" class="risk-factor-tag">
+                <i class="fi fi-rr-exclamation me-1"></i>{{ factor }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SUCCESS MESSAGE (add right before the ERROR div) ===== -->
+  <div *ngIf="successMsg" class="alert alert-success alert-dismissible fade show mx-0" style="border-radius:10px;margin-bottom:16px">
+    {{ successMsg }}
+    <button type="button" class="btn-close" (click)="successMsg = ''"></button>
+  </div>
+
+  <!-- ===== ERROR ===== -->
+  <div *ngIf="pageError" class="alert alert-danger alert-dismissible fade show mx-0">
+    <i class="fi fi-rr-exclamation me-2"></i>{{ pageError }}
+    <button type="button" class="btn-close" (click)="pageError = ''"></button>
+  </div>
+
+  <!-- ===== TOOLBAR ===== -->
+  <section class="toolbar-section">
+    <div class="toolbar-row">
+      <div class="search-box">
+        <i class="fi fi-rr-search"></i>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search by patient ID, mood, notes..."
+          [(ngModel)]="filters.query"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+      <select class="form-select filter-select" [(ngModel)]="filters.mood" (ngModelChange)="applyFilters()">
+        <option value="">All Moods</option>
+        <option *ngFor="let m of moodOptions" [value]="m.value">{{ m.label }}</option>
+      </select>
+      <select class="form-select filter-select" [(ngModel)]="filters.sleepQuality" (ngModelChange)="applyFilters()">
+        <option value="">All Sleep Quality</option>
+        <option *ngFor="let s of sleepQualityOptions" [value]="s.value">{{ s.label }}</option>
+      </select>
+    </div>
+    <p class="results-count">
+      Showing <strong>{{ filteredFollowUps.length }}</strong> of {{ followUps.length }} records
+    </p>
+  </section>
+
+  <!-- ===== TABLE ===== -->
+  <section class="table-card">
+    <div class="table-responsive">
+      <table class="table followup-table mb-0">
+        <thead>
+        <tr>
+          <th>PATIENT</th>
+          <th>DATE</th>
+          <th>MOOD</th>
+          <th>COGNITIVE</th>
+          <th>SLEEP</th>
+          <th>ADL</th>
+          <th>FLAGS</th>
+          <th class="text-end">ACTIONS</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let row of filteredFollowUps; trackBy: trackById" class="data-row">
+          <!-- Patient -->
+          <td>
+            <div class="cell-primary">Patient #{{ row.patientId }}</div>
+            <div class="cell-secondary">Caregiver #{{ row.caregiverId }}</div>
+          </td>
+          <!-- Date -->
+          <td>
+            <div class="cell-primary">{{ row.followUpDate || '-' }}</div>
+          </td>
+          <!-- Mood -->
+          <td>
+              <span class="mood-chip" [ngClass]="getMoodClass(row.mood)">
+                {{ getMoodIcon(row.mood) }} {{ row.mood || '-' }}
+              </span>
+          </td>
+          <!-- Cognitive Score -->
+          <td>
+            <div class="cognitive-bar-wrapper" *ngIf="row.cognitiveScore !== null && row.cognitiveScore !== undefined">
+              <div class="cognitive-bar">
+                <div class="cognitive-fill" [ngClass]="getCognitiveClass(row.cognitiveScore)"
+                     [style.width.%]="getCognitivePercent(row.cognitiveScore)"></div>
+              </div>
+              <span class="cognitive-label">{{ row.cognitiveScore }}/30</span>
+            </div>
+            <span *ngIf="row.cognitiveScore === null || row.cognitiveScore === undefined" class="text-muted">-</span>
+          </td>
+          <!-- Sleep -->
+          <td>
+              <span class="sleep-chip" [ngClass]="getSleepClass(row.sleepQuality)">
+                {{ row.hoursSlept || '?' }}h · {{ row.sleepQuality || '-' }}
+              </span>
+          </td>
+          <!-- ADL -->
+          <td>
+            <div class="adl-dots">
+              <span class="adl-dot" [ngClass]="getAdlClass(row.eating)" title="Eating">🍽</span>
+              <span class="adl-dot" [ngClass]="getAdlClass(row.dressing)" title="Dressing">👕</span>
+              <span class="adl-dot" [ngClass]="getAdlClass(row.mobility)" title="Mobility">🚶</span>
+            </div>
+          </td>
+          <!-- Flags -->
+          <td>
+              <span *ngIf="row.agitationObserved" class="flag-badge flag-warn" title="Agitation observed">
+                <i class="fi fi-rr-exclamation"></i> Agitation
+              </span>
+            <span *ngIf="row.confusionObserved" class="flag-badge flag-danger" title="Confusion observed">
+                <i class="fi fi-rr-interrogation"></i> Confusion
+              </span>
+            <span *ngIf="!row.agitationObserved && !row.confusionObserved" class="text-muted">—</span>
+          </td>
+          <!-- Actions -->
+          <td class="text-end">
+            <div class="action-btns">
+              <button type="button" class="btn btn-sm btn-action btn-view" (click)="openViewModal(row)" title="View details">
+                <i class="fi fi-rr-eye"></i>
+              </button>
+              <button type="button" class="btn btn-sm btn-action btn-edit" (click)="openEditModal(row)" title="Edit">
+                <i class="fi fi-rr-edit"></i>
+              </button>
+              <button type="button" class="btn btn-sm btn-action btn-delete" (click)="deleteFollowUp(row)" title="Delete">
+                <i class="fi fi-rr-trash"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+        <tr *ngIf="filteredFollowUps.length === 0">
+          <td colspan="8" class="empty-state">
+            <div class="empty-icon"><i class="fi fi-rr-clipboard-list"></i></div>
+            <h4>No follow-ups found</h4>
+            <p>Create a new follow-up to start tracking patient progress.</p>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+
+<!-- ===== VIEW DETAIL MODAL ===== -->
+<div class="modal-backdrop-custom" *ngIf="isViewOpen" (click)="isViewOpen = false">
+  <section class="detail-modal card" (click)="$event.stopPropagation()">
+    <div class="card-header bg-body d-flex align-items-center justify-content-between">
+      <h3 class="mb-0"><i class="fi fi-rr-heart-rate me-2"></i>Follow-Up Details</h3>
+      <button type="button" class="btn btn-sm btn-icon btn-action-gray rounded-circle" (click)="isViewOpen = false">
+        <i class="fi fi-rr-cross-small"></i>
+      </button>
+    </div>
+    <div class="card-body detail-body" *ngIf="viewFollowUp as fu">
+      <!-- Patient & Date info -->
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Patient ID</label>
+          <span>{{ fu.patientId }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Caregiver ID</label>
+          <span>{{ fu.caregiverId }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Follow-Up Date</label>
+          <span>{{ fu.followUpDate || '-' }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Created At</label>
+          <span>{{ fu.createdAt || '-' }}</span>
+        </div>
+      </div>
+
+      <hr class="detail-divider"/>
+
+      <!-- Cognitive & Behavioural -->
+      <h5 class="detail-section-title"><i class="fi fi-rr-brain me-2"></i>Cognitive & Behaviour</h5>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Cognitive Score</label>
+          <span>
+            <strong>{{ fu.cognitiveScore ?? '-' }}</strong>
+            <span *ngIf="fu.cognitiveScore !== null && fu.cognitiveScore !== undefined"> / 30</span>
+          </span>
+        </div>
+        <div class="detail-item">
+          <label>Mood</label>
+          <span class="mood-chip" [ngClass]="getMoodClass(fu.mood)">{{ getMoodIcon(fu.mood) }} {{ fu.mood || '-' }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Agitation</label>
+          <span [class.text-danger]="fu.agitationObserved">{{ fu.agitationObserved ? 'Yes' : 'No' }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Confusion</label>
+          <span [class.text-danger]="fu.confusionObserved">{{ fu.confusionObserved ? 'Yes' : 'No' }}</span>
+        </div>
+      </div>
+
+      <hr class="detail-divider"/>
+
+      <!-- ADL -->
+      <h5 class="detail-section-title"><i class="fi fi-rr-running me-2"></i>Daily Living (ADL)</h5>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Eating</label>
+          <span class="adl-badge" [ngClass]="getAdlClass(fu.eating)">{{ fu.eating || '-' }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Dressing</label>
+          <span class="adl-badge" [ngClass]="getAdlClass(fu.dressing)">{{ fu.dressing || '-' }}</span>
+        </div>
+        <div class="detail-item">
+          <label>Mobility</label>
+          <span class="adl-badge" [ngClass]="getAdlClass(fu.mobility)">{{ fu.mobility || '-' }}</span>
+        </div>
+      </div>
+
+      <hr class="detail-divider"/>
+
+      <!-- Sleep -->
+      <h5 class="detail-section-title"><i class="fi fi-rr-moon me-2"></i>Sleep</h5>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Hours Slept</label>
+          <span>{{ fu.hoursSlept ?? '-' }} hours</span>
+        </div>
+        <div class="detail-item">
+          <label>Sleep Quality</label>
+          <span class="sleep-chip" [ngClass]="getSleepClass(fu.sleepQuality)">{{ fu.sleepQuality || '-' }}</span>
+        </div>
+      </div>
+
+      <hr class="detail-divider"/>
+
+      <!-- Notes -->
+      <h5 class="detail-section-title"><i class="fi fi-rr-document me-2"></i>Notes</h5>
+      <div class="detail-notes">{{ fu.notes || 'No notes recorded.' }}</div>
+      <div class="mt-3" *ngIf="fu.vitalSigns">
+        <label class="detail-label">Vital Signs</label>
+        <div class="detail-notes">{{ fu.vitalSigns }}</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ===== CREATE/EDIT MODAL (Multi-step) ===== -->
+<div class="modal-backdrop-custom" *ngIf="isFormOpen">
+  <section class="form-modal card">
+    <div class="card-header bg-body d-flex align-items-center justify-content-between">
+      <h3 class="mb-0">{{ formMode === 'create' ? 'New Follow-Up' : 'Edit Follow-Up' }}</h3>
+      <button type="button" class="btn btn-sm btn-icon btn-action-gray rounded-circle" (click)="closeFormModal()">
+        <i class="fi fi-rr-cross-small"></i>
+      </button>
+    </div>
+
+    <!-- Stepper Header -->
+    <div class="stepper-header">
+      <div class="stepper-step" *ngFor="let step of formSteps; let i = index"
+           [class.active]="formStep === i" [class.done]="formStep > i" (click)="goToStep(i)">
+        <div class="step-circle">
+          <i *ngIf="formStep > i" class="fi fi-rr-check"></i>
+          <span *ngIf="formStep <= i">{{ i + 1 }}</span>
+        </div>
+        <span class="step-label">{{ step }}</span>
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="validateAndSave()">
+      <div class="card-body form-body">
+        <div *ngIf="formError" class="alert alert-danger mb-3">
+          <i class="fi fi-rr-exclamation me-2"></i>{{ formError }}
+        </div>
+
+        <!-- STEP 0: Patient Info -->
+        <div *ngIf="formStep === 0" class="step-content animate-in">
+          <h5 class="step-title"><i class="fi fi-rr-user me-2"></i>Patient Information</h5>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Patient ID <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" formControlName="patientId" placeholder="Enter patient ID" min="1" />
+              <small class="text-danger" *ngIf="controlHasError('patientId')">Patient ID is required.</small>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Caregiver ID <span class="text-danger">*</span></label>
+              <input type="number" class="form-control" formControlName="caregiverId" placeholder="Enter caregiver ID" min="1" />
+              <small class="text-danger" *ngIf="controlHasError('caregiverId')">Caregiver ID is required.</small>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Follow-Up Date <span class="text-danger">*</span></label>
+              <input type="date" class="form-control" formControlName="followUpDate" />
+              <small class="text-danger" *ngIf="controlHasError('followUpDate')">Date is required.</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 1: Cognitive & Behaviour -->
+        <div *ngIf="formStep === 1" class="step-content animate-in">
+          <h5 class="step-title"><i class="fi fi-rr-brain me-2"></i>Cognitive & Behaviour</h5>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label">Cognitive Score (0–30)</label>
+              <input type="number" class="form-control" formControlName="cognitiveScore" placeholder="e.g. 24" min="0" max="30" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Mood</label>
+              <select class="form-select" formControlName="mood">
+                <option [ngValue]="null">Select mood</option>
+                <option *ngFor="let m of moodOptions" [value]="m.value">{{ m.label }}</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <div class="form-check form-switch mt-3">
+                <input class="form-check-input" type="checkbox" formControlName="agitationObserved" id="agitation" />
+                <label class="form-check-label" for="agitation">Agitation Observed</label>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="form-check form-switch mt-3">
+                <input class="form-check-input" type="checkbox" formControlName="confusionObserved" id="confusion" />
+                <label class="form-check-label" for="confusion">Confusion Observed</label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: ADL & Sleep -->
+        <div *ngIf="formStep === 2" class="step-content animate-in">
+          <h5 class="step-title"><i class="fi fi-rr-running me-2"></i>Daily Activities & Sleep</h5>
+          <div class="row g-3">
+            <div class="col-md-4">
+              <label class="form-label">Eating</label>
+              <select class="form-select" formControlName="eating">
+                <option [ngValue]="null">Select</option>
+                <option *ngFor="let l of independenceLevels" [value]="l.value">{{ l.label }}</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Dressing</label>
+              <select class="form-select" formControlName="dressing">
+                <option [ngValue]="null">Select</option>
+                <option *ngFor="let l of independenceLevels" [value]="l.value">{{ l.label }}</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label">Mobility</label>
+              <select class="form-select" formControlName="mobility">
+                <option [ngValue]="null">Select</option>
+                <option *ngFor="let l of independenceLevels" [value]="l.value">{{ l.label }}</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Hours Slept</label>
+              <input type="number" class="form-control" formControlName="hoursSlept" placeholder="e.g. 7" min="0" max="24" />
+            </div>
+            <div class="col-md-6">
+              <label class="form-label">Sleep Quality</label>
+              <select class="form-select" formControlName="sleepQuality">
+                <option [ngValue]="null">Select</option>
+                <option *ngFor="let s of sleepQualityOptions" [value]="s.value">{{ s.label }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 3: Notes -->
+        <div *ngIf="formStep === 3" class="step-content animate-in">
+          <h5 class="step-title"><i class="fi fi-rr-document me-2"></i>Notes & Vital Signs</h5>
+          <div class="row g-3">
+            <div class="col-12">
+              <label class="form-label">Notes</label>
+              <textarea class="form-control" rows="4" formControlName="notes" placeholder="General observations, behaviour patterns..."></textarea>
+            </div>
+            <div class="col-12">
+              <label class="form-label">Vital Signs</label>
+              <textarea class="form-control" rows="3" formControlName="vitalSigns" placeholder="BP: 120/80, HR: 72, Temp: 36.8°C..."></textarea>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer with step navigation -->
+      <div class="card-footer bg-body d-flex justify-content-between align-items-center">
+        <button type="button" class="btn btn-light" *ngIf="formStep > 0" (click)="prevStep()">
+          <i class="fi fi-rr-arrow-left me-2"></i>Back
+        </button>
+        <span *ngIf="formStep === 0"></span>
+
+        <div class="d-flex gap-2">
+          <button type="button" class="btn btn-light" (click)="closeFormModal()">Cancel</button>
+          <button type="button" class="btn btn-primary" *ngIf="formStep < formSteps.length - 1" (click)="nextStep()">
+            Next<i class="fi fi-rr-arrow-right ms-2"></i>
+          </button>
+          <button type="submit" class="btn btn-primary" *ngIf="formStep === formSteps.length - 1" [disabled]="isSaving">
+            <i class="fi fi-rr-check me-2" *ngIf="!isSaving"></i>
+            {{ isSaving ? 'Saving...' : (formMode === 'create' ? 'Create Follow-Up' : 'Save Changes') }}
+          </button>
+        </div>
+      </div>
+    </form>
+  </section>
+</div>

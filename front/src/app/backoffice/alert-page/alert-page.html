@@ -1,0 +1,289 @@
+<div class="alert-page">
+
+  <!-- ===== PAGE HEADER ===== -->
+  <section class="page-head">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div>
+        <h1><i class="fi fi-rr-bell me-2"></i>Patient Alerts</h1>
+        <p class="text-muted mb-0">Monitor and manage critical patient notifications</p>
+      </div>
+      <div class="d-flex gap-2">
+        <button type="button" class="btn btn-outline-primary" (click)="toggleStats()">
+          <i class="fi fi-rr-chart-histogram me-2"></i>{{ showStats ? 'Hide' : 'Show' }} Statistics
+        </button>
+        <button type="button" class="btn btn-primary btn-lg create-btn" (click)="openCreateModal()">
+          <i class="fi fi-rr-plus me-2"></i>New Alert
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== STATS CARDS ===== -->
+  <section class="stats-row">
+    <article class="stat-card stat-glow-new">
+      <div class="stat-icon icon-red">
+        <i class="fi fi-rr-bell-ring"></i>
+      </div>
+      <div class="stat-body">
+        <h2>{{ getCountByStatus('NEW') }}</h2>
+        <span>New Alerts</span>
+      </div>
+    </article>
+    <article class="stat-card">
+      <div class="stat-icon icon-amber">
+        <i class="fi fi-rr-eye"></i>
+      </div>
+      <div class="stat-body">
+        <h2>{{ getCountByStatus('VIEWED') }}</h2>
+        <span>Viewed</span>
+      </div>
+    </article>
+    <article class="stat-card">
+      <div class="stat-icon icon-teal">
+        <i class="fi fi-rr-check-circle"></i>
+      </div>
+      <div class="stat-body">
+        <h2>{{ getCountByStatus('RESOLVED') }}</h2>
+        <span>Resolved</span>
+      </div>
+    </article>
+    <article class="stat-card">
+      <div class="stat-icon icon-purple">
+        <i class="fi fi-rr-flame"></i>
+      </div>
+      <div class="stat-body">
+        <h2>{{ getCriticalCount() }}</h2>
+        <span>Critical</span>
+      </div>
+    </article>
+  </section>
+
+  <!-- ===== ADVANCED: Statistics Panel ===== -->
+  <section class="stats-panel" *ngIf="showStats && statistics">
+    <div class="card">
+      <div class="card-body">
+        <h5 class="mb-3"><i class="fi fi-rr-chart-histogram me-2"></i>Alert Statistics (from API)</h5>
+        <div class="row g-3">
+          <div class="col-md-3">
+            <div class="mini-stat">
+              <label>Total Alerts</label>
+              <h3>{{ statistics.totalAlerts }}</h3>
+            </div>
+          </div>
+          <div class="col-md-3">
+            <div class="mini-stat">
+              <label>Critical Unresolved</label>
+              <h3 class="text-danger">{{ statistics.criticalUnresolvedCount }}</h3>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="mini-stat">
+              <label>Level Distribution</label>
+              <div class="dist-bars">
+                <div *ngFor="let entry of getDistEntries(statistics.levelDistribution)" class="dist-item">
+                  <span class="dist-label">{{ entry.key }}</span>
+                  <div class="dist-bar-bg">
+                    <div class="dist-bar-fill" [ngClass]="'bar-' + entry.key.toLowerCase()"
+                         [style.width.%]="getBarPercent(entry.value, statistics.totalAlerts)"></div>
+                  </div>
+                  <span class="dist-value">{{ entry.value }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ERROR ===== -->
+  <div *ngIf="pageError" class="alert alert-danger alert-dismissible fade show mx-0">
+    <i class="fi fi-rr-exclamation me-2"></i>{{ pageError }}
+    <button type="button" class="btn-close" (click)="pageError = ''"></button>
+  </div>
+
+  <!-- ===== SUCCESS ===== -->
+  <div *ngIf="successMsg" class="alert alert-success alert-dismissible fade show mx-0">
+    <i class="fi fi-rr-check me-2"></i>{{ successMsg }}
+    <button type="button" class="btn-close" (click)="successMsg = ''"></button>
+  </div>
+
+  <!-- ===== TOOLBAR ===== -->
+  <section class="toolbar-section">
+    <div class="toolbar-row">
+      <div class="search-box">
+        <i class="fi fi-rr-search"></i>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search by title, patient ID, description..."
+          [(ngModel)]="filters.query"
+          (ngModelChange)="applyFilters()"
+        />
+      </div>
+      <select class="form-select filter-select" [(ngModel)]="filters.level" (ngModelChange)="applyFilters()">
+        <option value="">All Levels</option>
+        <option *ngFor="let l of levelOptions" [value]="l.value">{{ l.label }}</option>
+      </select>
+      <select class="form-select filter-select" [(ngModel)]="filters.status" (ngModelChange)="applyFilters()">
+        <option value="">All Statuses</option>
+        <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
+      </select>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mt-2">
+      <p class="results-count mb-0">
+        Showing <strong>{{ filteredAlerts.length }}</strong> of {{ alerts.length }} alerts
+      </p>
+      <!-- Bulk Resolve -->
+      <div class="d-flex gap-2 align-items-center" *ngIf="bulkPatientId">
+        <input type="number" class="form-control form-control-sm" style="width:120px"
+               [(ngModel)]="bulkPatientId" placeholder="Patient ID" min="1" />
+        <button class="btn btn-sm btn-outline-success" (click)="bulkResolve()">
+          <i class="fi fi-rr-check-circle me-1"></i>Resolve All for Patient
+        </button>
+      </div>
+      <div *ngIf="!bulkPatientId">
+        <button class="btn btn-sm btn-outline-secondary" (click)="bulkPatientId = 1">
+          <i class="fi fi-rr-check-circle me-1"></i>Bulk Resolve...
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ALERTS LIST ===== -->
+  <section class="alerts-grid">
+    <article
+      *ngFor="let alert of filteredAlerts; trackBy: trackById"
+      class="alert-card"
+      [ngClass]="getLevelBorderClass(alert.level)"
+    >
+      <!-- Card Header -->
+      <div class="alert-card-head">
+        <div class="d-flex align-items-center gap-2">
+          <span class="level-indicator" [ngClass]="getLevelClass(alert.level)">
+            {{ getLevelIcon(alert.level) }} {{ alert.level }}
+          </span>
+          <span class="status-chip" [ngClass]="getStatusClass(alert.status)">
+            {{ alert.status }}
+          </span>
+        </div>
+        <div class="alert-card-actions">
+          <!-- ADVANCED: Escalate button -->
+          <button *ngIf="alert.level !== 'CRITICAL'"
+                  class="btn btn-sm btn-action btn-escalate" (click)="escalateAlert(alert)" title="Escalate Level">
+            <i class="fi fi-rr-arrow-up"></i>
+          </button>
+          <!-- ADVANCED: Mark as Viewed -->
+          <button *ngIf="alert.status === 'NEW'"
+                  class="btn btn-sm btn-action btn-view-action" (click)="markAsViewed(alert)" title="Mark as Viewed">
+            <i class="fi fi-rr-eye"></i>
+          </button>
+          <!-- ADVANCED: Resolve -->
+          <button *ngIf="alert.status !== 'RESOLVED'"
+                  class="btn btn-sm btn-action btn-resolve" (click)="resolveAlertAction(alert)" title="Resolve">
+            <i class="fi fi-rr-check"></i>
+          </button>
+          <button class="btn btn-sm btn-action btn-edit" (click)="openEditModal(alert)" title="Edit">
+            <i class="fi fi-rr-edit"></i>
+          </button>
+          <button class="btn btn-sm btn-action btn-delete" (click)="deleteAlert(alert)" title="Delete">
+            <i class="fi fi-rr-trash"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card Body -->
+      <div class="alert-card-body">
+        <h4 class="alert-title">{{ alert.title }}</h4>
+        <p class="alert-desc">{{ alert.description || 'No description provided.' }}</p>
+      </div>
+
+      <!-- Card Footer -->
+      <div class="alert-card-foot">
+        <span class="patient-tag">
+          <i class="fi fi-rr-user me-1"></i>Patient #{{ alert.patientId }}
+        </span>
+        <span class="time-tag">
+          <i class="fi fi-rr-clock me-1"></i>{{ formatDate(alert.createdAt) }}
+        </span>
+      </div>
+    </article>
+
+    <!-- Empty -->
+    <div *ngIf="filteredAlerts.length === 0" class="empty-state-card">
+      <div class="empty-icon"><i class="fi fi-rr-bell"></i></div>
+      <h4>No alerts found</h4>
+      <p>Create a new alert to start monitoring patient events.</p>
+    </div>
+  </section>
+</div>
+
+<!-- ===== CREATE/EDIT MODAL ===== -->
+<div class="modal-backdrop-custom" *ngIf="isFormOpen">
+  <section class="form-modal card">
+    <div class="card-header bg-body d-flex align-items-center justify-content-between">
+      <h3 class="mb-0">
+        <i class="fi fi-rr-bell me-2"></i>{{ formMode === 'create' ? 'Create Alert' : 'Edit Alert' }}
+      </h3>
+      <button type="button" class="btn btn-sm btn-icon btn-action-gray rounded-circle" (click)="closeFormModal()">
+        <i class="fi fi-rr-cross-small"></i>
+      </button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="validateAndSave()">
+      <div class="card-body form-body">
+        <div *ngIf="formError" class="alert alert-danger mb-3">
+          <i class="fi fi-rr-exclamation me-2"></i>{{ formError }}
+        </div>
+
+        <div class="row g-3">
+          <div class="col-12">
+            <label class="form-label">Alert Title <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" formControlName="title" placeholder="e.g. High blood pressure detected" />
+            <small class="text-danger" *ngIf="controlHasError('title')">Title is required (min 2 characters).</small>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Patient ID <span class="text-danger">*</span></label>
+            <input type="number" class="form-control" formControlName="patientId" placeholder="Patient ID" min="1" />
+            <small class="text-danger" *ngIf="controlHasError('patientId')">Patient ID is required.</small>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Alert Level <span class="text-danger">*</span></label>
+            <select class="form-select" formControlName="level">
+              <option *ngFor="let l of levelOptions" [value]="l.value">{{ l.label }}</option>
+            </select>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">Status</label>
+            <select class="form-select" formControlName="status">
+              <option *ngFor="let s of statusOptions" [value]="s.value">{{ s.label }}</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Description</label>
+            <textarea class="form-control" rows="4" formControlName="description"
+                      placeholder="Provide details about this alert..."></textarea>
+          </div>
+        </div>
+
+        <div class="level-preview mt-4" *ngIf="form.get('level')?.value as lvl">
+          <label class="form-label text-muted">Preview</label>
+          <div class="preview-card" [ngClass]="getLevelBorderClass(lvl)">
+            <span class="level-indicator" [ngClass]="getLevelClass(lvl)">
+              {{ getLevelIcon(lvl) }} {{ lvl }}
+            </span>
+            <strong class="ms-3">{{ form.get('title')?.value || 'Alert title...' }}</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer bg-body d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-light" (click)="closeFormModal()">Cancel</button>
+        <button type="submit" class="btn btn-primary" [disabled]="isSaving">
+          <i class="fi fi-rr-check me-2" *ngIf="!isSaving"></i>
+          {{ isSaving ? 'Saving...' : (formMode === 'create' ? 'Create Alert' : 'Save Changes') }}
+        </button>
+      </div>
+    </form>
+  </section>
+</div>
