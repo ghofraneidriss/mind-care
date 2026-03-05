@@ -33,7 +33,7 @@ export class AuthService {
   private readonly storageKey = 'loggedUser';
   private readonly backofficeRoles = new Set(['ADMIN', 'DOCTOR', 'CAREGIVER']);
 
-  constructor(private readonly http: HttpClient) {}
+  constructor(private readonly http: HttpClient) { }
 
   register(payload: RegisterRequest): Observable<AuthUser> {
     return this.http.post<AuthUser>(`${this.apiUrl}/register`, payload);
@@ -66,6 +66,10 @@ export class AuthService {
 
   isAdmin(): boolean {
     return this.getLoggedRole() === 'ADMIN';
+  }
+
+  isDoctor(): boolean {
+    return this.getLoggedRole() === 'DOCTOR';
   }
 
   isBackofficeRole(role?: string | null): boolean {

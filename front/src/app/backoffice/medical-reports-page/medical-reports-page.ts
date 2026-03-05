@@ -3,12 +3,14 @@ import { HttpClient } from '@angular/common/http';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MedicalReport, ReportStatus } from './medical-report.model';
 import { MedicalReportService } from './medical-report.service';
+import { AuthService } from '../../frontoffice/auth/auth.service';
 
 interface UserOption {
   userId: number;
   firstName: string;
   lastName: string;
   role: string;
+  email?: string;
 }
 
 @Component({
@@ -48,11 +50,13 @@ export class MedicalReportsPageComponent implements OnInit {
     private readonly fb: FormBuilder,
     private readonly http: HttpClient,
     private readonly medicalReportService: MedicalReportService,
+    public readonly authService: AuthService
   ) {
     this.form = this.fb.group({
       title: ['', [Validators.required, Validators.minLength(2)]],
       patientid: [null, [Validators.required, Validators.min(1)]],
       doctorid: [null, [Validators.required, Validators.min(1)]],
+      doctorEmail: [''],
       description: ['', [Validators.required, Validators.minLength(2)]],
       status: ['DRAFT', Validators.required],
       approvalByDocter: [null],
@@ -101,6 +105,7 @@ export class MedicalReportsPageComponent implements OnInit {
       title: '',
       patientid: null,
       doctorid: null,
+      doctorEmail: '',
       description: '',
       status: 'DRAFT',
       approvalByDocter: null,
@@ -121,6 +126,7 @@ export class MedicalReportsPageComponent implements OnInit {
       title: this.selectedReport.title,
       patientid: this.selectedReport.patientid,
       doctorid: this.selectedReport.doctorid,
+      doctorEmail: this.selectedReport.doctorEmail ?? '',
       description: this.selectedReport.description,
       status: this.selectedReport.status,
       approvalByDocter: this.selectedReport.approvalByDocter ?? null,
@@ -151,6 +157,7 @@ export class MedicalReportsPageComponent implements OnInit {
       title: String(value.title || '').trim(),
       patientid: patientId,
       doctorid: doctorId,
+      doctorEmail: value.doctorEmail ? String(value.doctorEmail).trim() : null,
       description: value.description,
       status: value.status,
       approvalByDocter: value.approvalByDocter
@@ -219,6 +226,25 @@ export class MedicalReportsPageComponent implements OnInit {
     });
   }
 
+  exportPdf(report: MedicalReport): void {
+    if (!report.reportid) return;
+
+    this.medicalReportService.exportPdf(report.reportid).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `medical_report_${report.reportid}.pdf`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: (error) => {
+        console.error('PDF export failed', error);
+        alert('Failed to export PDF. Please ensure the medical report service is running.');
+      },
+    });
+  }
+
   getStatusClass(status: ReportStatus): string {
     if (status === 'APPROVED') {
       return 'bg-success-subtle text-success';
@@ -227,6 +253,16 @@ export class MedicalReportsPageComponent implements OnInit {
       return 'bg-primary-subtle text-primary';
     }
     return 'bg-body-secondary text-body';
+  }
+
+  getStatusBadgeClass(status: ReportStatus): string {
+    if (status === 'APPROVED') return 'badge-approved';
+    if (status === 'REVIEWED') return 'badge-reviewed';
+    return 'badge-draft';
+  }
+
+  countByStatus(status: ReportStatus): number {
+    return this.reports.filter((r) => r.status === status).length;
   }
 
   getStepState(step: 1 | 2 | 3): 'done' | 'pending' {
@@ -365,4 +401,5 @@ export class MedicalReportsPageComponent implements OnInit {
       error.message.toLowerCase().includes('parsing')
     );
   }
+
 }

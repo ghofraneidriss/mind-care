@@ -6,6 +6,7 @@ export interface MedicalReport {
   doctorid: number | null;
   patientName?: string;
   doctorName?: string;
+  doctorEmail?: string | null;
   status: ReportStatus;
   createdAt?: string | null;
   title: string;
