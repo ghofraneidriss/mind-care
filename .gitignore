@@ -36,3 +36,9 @@ build/
 
 ### Mac OS ###
 .DS_Store
+# Node and Angular specific exclusions
+node_modules/
+front/node_modules/
+.angular/
+dist/
+coverage/

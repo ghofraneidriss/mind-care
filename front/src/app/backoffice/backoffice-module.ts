@@ -21,6 +21,10 @@ import { UserManagementPage } from './user-management/user-management';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
+import { FollowUpPageComponent } from './followup-page/followup-page';
+import { AlertPageComponent } from './alert-page/alert-page';
+import { FilesManagementPageComponent } from './files-management/files-management';
+
 
 @NgModule({
   declarations: [
@@ -42,6 +46,9 @@ import { Footer } from './footer/footer';
     MedicalReportsPageComponent,
     Header,
     Footer,
+    FollowUpPageComponent,
+    AlertPageComponent,
+    FilesManagementPageComponent,
   ],
   imports: [CommonModule, FormsModule, ReactiveFormsModule, BackofficeRoutingModule],
 })
