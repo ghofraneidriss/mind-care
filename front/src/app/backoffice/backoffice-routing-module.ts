@@ -19,6 +19,8 @@ import { TeamManagementPage } from './team-management/team-management';
 import { UserManagementPage } from './user-management/user-management';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
 import { FilesManagementPageComponent } from './files-management/files-management';
+import { ForumsPage } from './forums/forums';
+import { IncidentsPage } from './incidents/incidents';
 
 const routes: Routes = [
   { path: '', component: Home2 },
@@ -39,6 +41,8 @@ const routes: Routes = [
   { path: 'user-management', component: UserManagementPage, canActivate: [strictAdminGuard] },
   { path: 'medical-reports', component: MedicalReportsPageComponent },
   { path: 'files-management', component: FilesManagementPageComponent },
+  { path: 'forums', component: ForumsPage },
+  { path: 'incidents', component: IncidentsPage },
   { path: '**', redirectTo: '' },
 ];
 

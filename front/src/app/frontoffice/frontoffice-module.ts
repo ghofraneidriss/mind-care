@@ -24,6 +24,9 @@ import { LoginCoverAuthPage } from './auth/login-cover/login-cover';
 import { NewPasswordCoverAuthPage } from './auth/new-password-cover/new-password-cover';
 import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
 import { PatientReportsPage } from './reports/reports';
+import { FrontofficeActivitiesPage } from './activities/activities';
+import { FrontofficeForumsPage } from './forums/forums';
+import { FrontofficeIncidentsPage } from './incidents/incidents';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
 
@@ -50,6 +53,9 @@ import { Footer } from './footer/footer';
     NewPasswordCoverAuthPage,
     RegisterCoverAuthPage,
     PatientReportsPage,
+    FrontofficeActivitiesPage,
+    FrontofficeForumsPage,
+    FrontofficeIncidentsPage,
     Header,
     Footer,
   ],

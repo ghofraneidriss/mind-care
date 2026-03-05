@@ -21,6 +21,9 @@ import { LoginCoverAuthPage } from './auth/login-cover/login-cover';
 import { NewPasswordCoverAuthPage } from './auth/new-password-cover/new-password-cover';
 import { RegisterCoverAuthPage } from './auth/register-cover/register-cover';
 import { PatientReportsPage } from './reports/reports';
+import { FrontofficeActivitiesPage } from './activities/activities';
+import { FrontofficeForumsPage } from './forums/forums';
+import { FrontofficeIncidentsPage } from './incidents/incidents';
 
 const routes: Routes = [
   { path: '', component: Home1 },
@@ -46,6 +49,9 @@ const routes: Routes = [
   { path: 'auth/signup', component: RegisterCoverAuthPage },
   { path: 'auth/register-cover', component: RegisterCoverAuthPage },
   { path: 'reports', component: PatientReportsPage },
+  { path: 'activities', component: FrontofficeActivitiesPage },
+  { path: 'forums', component: FrontofficeForumsPage },
+  { path: 'incidents', component: FrontofficeIncidentsPage },
   { path: '**', redirectTo: '' },
 ];
 

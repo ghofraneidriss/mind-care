@@ -20,6 +20,8 @@ import { TeamManagementPage } from './team-management/team-management';
 import { UserManagementPage } from './user-management/user-management';
 import { MedicalReportsPageComponent } from './medical-reports-page/medical-reports-page';
 import { FilesManagementPageComponent } from './files-management/files-management';
+import { ForumsPage } from './forums/forums';
+import { IncidentsPage } from './incidents/incidents';
 import { Header } from './header/header';
 import { Footer } from './footer/footer';
 
@@ -42,6 +44,8 @@ import { Footer } from './footer/footer';
     UserManagementPage,
     MedicalReportsPageComponent,
     FilesManagementPageComponent,
+    ForumsPage,
+    IncidentsPage,
     Header,
     Footer,
   ],
